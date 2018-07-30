@@ -9,13 +9,73 @@
 
   </head>
   <body>
-Enter Command:    <input type="text" />
+Enter Command:    <input type="text" id="command" />
 <br>
-<button id="send" >Send</button>
+<button id="send" >Send</button><span class="message"></span>
+<BR>
+B3 = STOP
+<BR>
+B4 = START
+<BR>
+See <a href="https://github.com/donundeen/seeburgjukebox/blob/master/arduinolistener.rpi.node.js">https://github.com/donundeen/seeburgjukebox/blob/master/arduinolistener.rpi.node.js</a> 
+For a full list of codes and playlists.
+<BR>
+Or, make a spotify playlist and share with with donundeen on spotify, and send the url to dhu3@georgetown.edu, and we'll set it up on the jukebox.
+
+Enjoy!
 
 <script>
+
+  var group = "jukebox";
+  var feedname= "jukebox_command";
+  var key = false; // put AIO key here
+
+  function set_aio_key(){
+    google.script.run
+    .withFailureHandler(function(error){console.log(error);})
+    .withSuccessHandler(function(data){
+      key = data;
+      console.log("got key " + key);
+    }).get_aio_key();  
+  }
+
+
+  function send_jukebox(value){
+    $(".message").text("sending command " + value + " ...");
+    var sendurl = "https://io.adafruit.com/api/groups/jukebox/send.json?x-aio-key="+key+"&"+feedname+"="+value;
+    $.ajax({
+      url : sendurl,
+      success: function(data){
+         console.log("send success");
+         $(".message").text("Command "+ value + " sent!");
+         console.log(data);
+      },
+      error: function (error){
+        console.log("recieve error");
+        $(".message").text("Hm, something went wrong... "+ error );
+        console.log(error);
+      }
+    });
+  }
+
+
 $(document).ready(function(){
   console.log("ready");
+  set_aio_key();
+  $("#send").click(function(){
+    var command = $("#command").val();
+    console.log("command " + command);
+    send_jukebox(command);
+  });
+  $("#command").on("keydown", function(e){
+    $(".message").text("");  
+    if(e.keyCode == 13)
+    {
+        var command = $("#command").val();
+        console.log("command " + command);
+        send_jukebox(command);
+    }
+  });
 });
 </script>
   </body>

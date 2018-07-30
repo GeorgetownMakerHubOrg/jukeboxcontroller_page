@@ -1,3 +1,5 @@
+//tinyurl: https://tinyurl.com/gumh-jukebox
+
 function doGet(e) {
   Logger.log("opening");  
   parameter = e.parameter;
@@ -15,4 +17,8 @@ function doGet(e) {
 function include(filename) {
   return HtmlService.createHtmlOutputFromFile(filename)
       .getContent();
+}
+
+function get_aio_key(){
+  return get_aio_key(); 
 }
